@@ -14,7 +14,7 @@ constexpr char PyString::whitespace[];
 
 
 
-/** Implementations **/
+/** Implementations for the PyString class **/
 
 bool PyString::is_number() const
 {
@@ -354,7 +354,6 @@ double PyString::str_to_dbl(const std::string& text)
     {
         for(std::string::const_reverse_iterator rpos= text.rbegin(); rpos!= text.rend()- (pos- text.begin())- 1; rpos++)
         {
-            std::cout << *rpos << std::endl;
             if((*rpos< '0')|| (*rpos> '9'))
             {
                 throw ValueError("Error: Can not convert given string data to floating point value.\n", text);
@@ -393,6 +392,79 @@ bool PyString::str_to_bool(const std::string& text)
         }
     }
 }
+
+
+std::string PyString::int_to_str(int value)
+{
+    std::string nstr;
+    bool sign= false;
+
+    if(value < 0)
+    {
+        value*= -1;
+        sign= true;
+    }
+
+    while(value)
+    {
+        nstr.insert(nstr.begin(), (value%10)+ 48);
+
+        value/= 10;
+    }
+
+    if(sign)
+    {
+        nstr.insert(nstr.begin(), '-');
+    }
+
+    return nstr;
+}
+
+
+std::string PyString::uint_to_str(unsigned int value)
+{
+    std::string nstr;
+
+    while(value)
+    {
+        nstr.insert(nstr.begin(), (value%10)+ 48);
+
+        value/= 10;
+    }
+
+    return nstr;
+}
+
+
+std::string PyString::dbl_to_str(double value, int accuracy)
+{
+    std::string nstr= PyString::int_to_str( (int) value);
+    nstr.push_back('.');
+
+    value-= (int) value;
+
+    while(value&& accuracy)
+    {
+        value*= 10;
+        nstr.push_back( ((int) value)+ 48 );
+        value-= (int) value;
+
+        accuracy--;
+    }
+
+    return nstr;
+}
+
+
+std::string PyString::bool_to_str(bool value)
+{
+    if(value)
+    {
+        return "true";
+    }
+    return "false";
+}
+
 
 PyStringList& PyString::split(PyStringList& strlist, const std::string& delimiter, int nbr) const
 {
@@ -435,7 +507,7 @@ PyStringList& PyString::mult_split(PyStringList& strlist, const std::string& del
 
         if( ischar|| (!lastischar) )
         {
-           strlist.back().content.push_back(*pos);
+           strlist.back().sfappend(*pos);
         }
         else
         {
@@ -476,5 +548,106 @@ PyString& PyString::sfjoin(const PyStringList& strs, int nbr)
 
     return *this;
 }
+
+
+PyString PyString::tabpad(const char spacer, const unsigned int nbr, const std::string& term) const
+{
+    std::string nstr= this->content;
+
+    for(std::string::const_iterator pos= content.end(); pos< content.begin()+ nbr; pos++)
+    {
+        nstr.push_back( spacer );
+    }
+
+    return nstr.append( term );
+}
+
+
+/** Implementations for the PyInFile class **/
+
+unsigned int PyInFile::length()
+{
+    unsigned int fllength= 0;
+
+    if(stream.is_open())
+    {
+        stream.seekg(0, stream.end);
+        fllength= stream.tellg();
+        stream.seekg(0, stream.beg);
+
+    }
+
+    return fllength;
+}
+
+PyString& PyInFile::readline(PyString& str, const std::string& delimiters, int length)
+{
+    char c;
+
+    str.clear();
+
+    if(stream.is_open())
+    {
+        while(stream.get(c)&& length)
+        {
+            str.sfappend(c);
+
+            for(std::string::const_iterator dpos= delimiters.begin(); dpos!= delimiters.end(); dpos++)
+            {
+                if(c== *dpos)
+                {
+                    return str;
+                }
+            }
+
+            length--;
+        }
+
+    }
+
+    return str;
+}
+
+
+PyString& PyInFile::readfile(PyString& str, int length)
+{
+    char c;
+
+    str.clear();
+
+    if(stream.is_open())
+    {
+        while(stream.get(c)&& length)
+        {
+            str.sfappend(c);
+        }
+
+        length--;
+    }
+
+    return str;
+}
+
+
+PyStringList& PyInFile::readlines(PyStringList& strs, int nbr)
+{
+    strs.resize(0);
+
+    if(stream.is_open())
+    {
+        while(nbr&& ( !stream.eof() ))
+        {
+            strs.push_back(PyString());
+
+            this->readline( strs.back() );
+
+            nbr--;
+        }
+
+    }
+
+    return strs;
+}
+
 
 } //namespace pystring
