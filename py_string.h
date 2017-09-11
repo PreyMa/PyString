@@ -31,9 +31,9 @@ class ValueError : std::exception
 public:
     ValueError(const std::string& datatext, const std::string& valuetext): data(datatext), value(valuetext){}
 
-    virtual const char* what(){return "Value Error of PyString conversion.";}
-    const std::string& get_data(){return data;}
-    const std::string& get_value(){return value;}
+    virtual const char* what()           {return "Value Error of PyString conversion.";}
+    const std::string& get_data()  const {return data;}
+    const std::string& get_value() const {return value;}
 
     void setdata(const std::string& text){data= text;}
 };
@@ -134,6 +134,7 @@ public:
     inline bool            to_bool() const {return str_to_bool (this->content);};
 
     inline PyString& set(const std::string& value){(this->content)= value; return *this;};
+    inline PyString& set(const char* const  value){(this->content)= value; return *this;}
     inline PyString& set(const int          value){(this->content)= PyString::int_to_str  ( value ); return *this;};
     inline PyString& set(const unsigned int value){(this->content)= PyString::uint_to_str ( value ); return *this;};
     inline PyString& set(const double       value){(this->content)= PyString::dbl_to_str  ( value ); return *this;};
