@@ -199,7 +199,7 @@ public:
 
 
     /** Constructors **/
-    PyInFile(): stream(std::ifstream()){};
+    PyInFile(){};
     PyInFile(const std::string& path)                               {this->open(path); };
     PyInFile(const std::string& path, std::ios_base::openmode mode) {this->open(path, mode); };
 
