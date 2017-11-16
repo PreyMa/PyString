@@ -24,4 +24,4 @@ implementations always work correctly in all edge cases, or similarly
 to their python equivalents.
 
 Maybe I will add other things here later on, when I need to extend
-my summary of frequenty functions.
+my summary of frequently functions.
