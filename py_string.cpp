@@ -563,6 +563,81 @@ PyString PyString::tabpad(const char spacer, const unsigned int nbr, const std::
 }
 
 
+PyString PyString::parse_escsequc() const
+{
+    std::string nstr;
+
+    for(std::string::const_iterator pos= content.begin(); pos!= content.end(); pos++)
+    {
+        if(*pos== '\\')
+        {
+            if(pos!= content.end()- 1)
+            {
+                pos++;
+
+                switch(*pos)
+                {
+                case 'a':
+                    nstr.push_back('\a');
+                    break;
+
+                case 'b':
+                    nstr.push_back('\b');
+                    break;
+
+                case 'f':
+                    nstr.push_back('\f');
+                    break;
+
+                case 'n':
+                    nstr.push_back('\n');
+                    break;
+
+                case 'r':
+                    nstr.push_back('\r');
+                    break;
+
+                case 't':
+                    nstr.push_back('\t');
+                    break;
+
+                case 'v':
+                    nstr.push_back('\v');
+                    break;
+
+                case '\\':
+                    nstr.push_back('\\');
+                    break;
+
+                case '\'':
+                    nstr.push_back('\'');
+                    break;
+
+                case '\"':
+                    nstr.push_back('\"');
+                    break;
+
+                case '\?':
+                    nstr.push_back('\?');
+                    break;
+
+                default:
+                    nstr.push_back('\\');
+                    nstr.push_back(*pos);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            nstr.push_back(*pos);
+        }
+    }
+
+    return nstr;
+}
+
+
 /** Implementations for the PyInFile class **/
 
 unsigned int PyInFile::length()

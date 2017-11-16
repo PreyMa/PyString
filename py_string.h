@@ -57,6 +57,7 @@ public:
     static constexpr char whitespace[]= " \t\n\f\r\v";
 
     /** Constructors **/
+    PyString(const char *const data):  content(data){}          //from string constant
     PyString(const std::string& data): content(data){}          //from standard string
     PyString(const PyString& cpy):     content(cpy.content){}   //from pystring: copy constructor
     PyString(){}                                                //empty string
@@ -75,9 +76,10 @@ public:
     inline PyString append(const PyString&    text) const {return (this->content)+ text.content;}   //add string to copy
 
 
-    PyString lower()     const; //make all characters lower case
-    PyString upper()     const; //make all characters upper case
-    PyString swap_case() const; //invert the case all of all characters
+    PyString lower()          const; //make all characters lower case
+    PyString upper()          const; //make all characters upper case
+    PyString swap_case()      const; //invert the case all of all characters
+    PyString parse_escsequc() const; //parse string for C style escape sequences
 
 
     PyStringList& split     (PyStringList& strlist, const std::string& delimiter, int nbr= -1) const;                           //split string into list of strings at delimiting string
@@ -99,9 +101,10 @@ public:
     inline PyString& sfappend(const PyString&    text) {(this->content)+= text.content; return *this;}  //add string
 
 
-    inline PyString& sflower()     {*this= this->lower();     return *this;};
-    inline PyString& sfupper()     {*this= this->upper();     return *this;};
-    inline PyString& sfswap_case() {*this= this->swap_case(); return *this;};
+    inline PyString& sflower()          {*this= this->lower();          return *this;};
+    inline PyString& sfupper()          {*this= this->upper();          return *this;};
+    inline PyString& sfswap_case()      {*this= this->swap_case();      return *this;};
+    inline PyString& sfparse_escsequc() {*this= this->parse_escsequc(); return *this;};
 
 
     inline PyString& clear()       {(this->content).erase(); return *this;}
