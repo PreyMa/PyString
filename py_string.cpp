@@ -495,6 +495,7 @@ PyStringList& PyString::mult_split(PyStringList& strlist, const std::string& del
     bool ischar, lastischar= false;
 
     strlist.resize(1);
+    strlist.back().clear();
 
     while((nbr)&& (pos!= content.end()))
     {
